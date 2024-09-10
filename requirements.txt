@@ -1,4 +1,4 @@
-﻿asgiref
+
 beautifulsoup4
 certifi
 crispy-bootstrap5
