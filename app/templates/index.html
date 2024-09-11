@@ -186,7 +186,7 @@
         //     "ws://chatapp-test-k3zv.onrender.com/ws/sc/"
         // );
 
-        const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const wsProtocol = window.location.protocol === "https:" ? "ws://" : "ws://";
         const wsUrl = wsProtocol + window.location.host + "/ws/sc/";
         const socket = new WebSocket(wsUrl);
 
