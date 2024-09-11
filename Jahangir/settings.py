@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-bt!p=b^uv67cw3djqt-p!ycr6^(^-=kc=g$*8e#a#9gfkbxv)i
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = ['https://chatapp-test-k3zv.onrender.com','https://*.127.0.0.1']
 
 # Application definition
 
