@@ -1,3 +1,5 @@
+
+You said:
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,14 +13,15 @@
     @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
 
     :root {
-        --lightDark: #1e2a38;
-        --dark: #141722;
-        --fontPrimary: #ffffff;
-        --green: #35bb78;
-        --userMessage: #4a90e2; /* User message bubble color */
-        --replyMessage: #6a1b9a; /* Reply message bubble color */
-        --outgoingMessage: #ff5722; /* Outgoing message bubble color */
+    --lightDark: #1e2a38;
+    --dark: #141722;
+    --fontPrimary: #ffffff;
+    --green: #35bb78;
+    --userMessage: #007bff; /* New color for received messages */
+    --replyMessage: #9c27b0; /* New color for reply message */
+    --outgoingMessage: #ff9800; /* New color for sent messages */
     }
+
 
     * {
         margin: 0;
@@ -174,12 +177,12 @@
 
             const messageElement = document.createElement('li');
             messageElement.className = 'post post--left'; // Received message style
-            messageElement.innerHTML = `
+            messageElement.innerHTML = 
                 <div class="post__header post__header--user">
                     <div class="post__text">${message}</div>
                     <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
                 </div>
-            `;
+            ;
             chatDisplay.appendChild(messageElement);
             chatDisplay.scrollTop = chatDisplay.scrollHeight;
         };
@@ -199,12 +202,12 @@
                 // Display outgoing message
                 const messageElement = document.createElement('li');
                 messageElement.className = 'post post--right'; // Sent message style
-                messageElement.innerHTML = `
+                messageElement.innerHTML = 
                     <div class="post__header post__header--reply">
                         <div class="post__text">${message}</div>
                         <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
                     </div>
-                `;
+                ;
                 chatDisplay.appendChild(messageElement);
                 chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
