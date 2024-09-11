@@ -163,58 +163,68 @@
             console.log("Connection established with the WebSocket...");
         };
 
-        ws.onmessage = function (event) {
-            console.log("Message received from WebSocket:", event);
+        ws.onmessage = function(event) {
+    console.log("Message received from WebSocket:", event);
 
-            const data = JSON.parse(event.data);
-            const innerData = JSON.parse(data.text);
+    const data = JSON.parse(event.data);
+    const message = data.msg;
+    const isReply = data.isReply;  // Ensure the server sends this flag
 
-            const message = innerData.msg;
-            const chatDisplay = document.querySelector('.chat-display');
+    const chatDisplay = document.querySelector('.chat-display');
 
-            if (innerData.isReply) {
-                const messageElement = document.createElement('li');
-                messageElement.className = 'post post--left'; // Received message style
-                messageElement.innerHTML = `
-                    <div class="post__header post__header--user">
-                        <div class="post__text">${message}</div>
-                        <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
-                    </div>
-                `;
-                chatDisplay.appendChild(messageElement);
-                chatDisplay.scrollTop = chatDisplay.scrollHeight;
-            }
-        };
+    const messageElement = document.createElement('li');
+    if (isReply) {
+        messageElement.className = 'post post--left'; // Received message style
+        messageElement.innerHTML = `
+            <div class="post__header post__header--user">
+                <div class="post__text">${message}</div>
+                <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
+            </div>
+        `;
+    } else {
+        messageElement.className = 'post post--right'; // Sent message style
+        messageElement.innerHTML = `
+            <div class="post__header post__header--reply">
+                <div class="post__text">${message}</div>
+                <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
+            </div>
+        `;
+    }
 
-        document.getElementById("submit").onclick = function (event) {
-            event.preventDefault(); // Prevent form submission
-            const messageInput = document.getElementById("message");
-            const message = messageInput.value;
+    chatDisplay.appendChild(messageElement);
+    chatDisplay.scrollTop = chatDisplay.scrollHeight;
+};
 
-            if (message.trim()) {
-                const chatDisplay = document.querySelector('.chat-display');
+document.getElementById("submit").onclick = function(event) {
+    event.preventDefault(); // Prevent form submission
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value.trim();
 
-                // Display outgoing message
-                const messageElement = document.createElement('li');
-                messageElement.className = 'post post--right'; // Sent message style
-                messageElement.innerHTML = `
-                    <div class="post__header post__header--reply">
-                        <div class="post__text">${message}</div>
-                        <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
-                    </div>
-                `;
-                chatDisplay.appendChild(messageElement);
-                chatDisplay.scrollTop = chatDisplay.scrollHeight;
+    if (message) {
+        const chatDisplay = document.querySelector('.chat-display');
 
-                // Send message to WebSocket server
-                ws.send(JSON.stringify({
-                    "msg": message,
-                    "isReply": false  // Mark this message as sent by the current user
-                }));
+        // Display outgoing message immediately
+        const messageElement = document.createElement('li');
+        messageElement.className = 'post post--right'; // Sent message style
+        messageElement.innerHTML = `
+            <div class="post__header post__header--reply">
+                <div class="post__text">${message}</div>
+                <span class="post__header--time">${new Date().toLocaleTimeString()}</span>
+            </div>
+        `;
+        chatDisplay.appendChild(messageElement);
+        chatDisplay.scrollTop = chatDisplay.scrollHeight;
 
-                messageInput.value = ""; // Clear input field
-            }
-        };
+        // Send message to WebSocket server
+        ws.send(JSON.stringify({
+            "msg": message,
+            "isReply": false  // Mark this message as sent by the current user
+        }));
+
+        messageInput.value = ""; // Clear input field
+    }
+};
+
 
         ws.onclose = function () {
             console.log("WebSocket connection closed.");
