@@ -182,9 +182,14 @@
 
     <script>
 
-        let ws = new WebSocket(
-            "ws://chatapp-test-k3zv.onrender.com/ws/sc/"
-        );
+        // let ws = new WebSocket(
+        //     "ws://chatapp-test-k3zv.onrender.com/ws/sc/"
+        // );
+
+        const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        const wsUrl = wsProtocol + window.location.host + "/ws/sc/";
+        const socket = new WebSocket(wsUrl);
+
 
         ws.onopen = function (event) {
             console.log("Connection established with the WebSocket...");
