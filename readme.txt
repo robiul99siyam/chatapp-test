@@ -1,9 +1,9 @@
 DJANGO Channels: setup:
 
-        ```
+        ``
         1.pip install daphne
         2.ASGI_APPLICATION = 'Jahangir.asgi.application'
-        ```
+        ``
         3.asgi.py file ===============================================
                        import os
 
