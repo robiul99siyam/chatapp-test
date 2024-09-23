@@ -42,31 +42,24 @@ application = ProtocolTypeRouter({
     ),
 })
 ```
-3. Create a Django App
-Create your Django app (if you haven't already):
 
-
-python manage.py startapp app
-4. Define WebSocket Routing
+# Define WebSocket Routing
 In your app, create a routing.py file:
-
-python
-Copy code
+```
 from django.urls import path
 from . import consumers
 
 websocket_urlpatterns = [
     path("ws/sc/", consumers.MySyncConsumer.as_asgi()),
 ]
-5. Create Consumers
-Create a consumers.py file in your app directory:
+```
+# Create Consumers
 
-python
-Copy code
 from channels.consumer import SyncConsumer
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
 
+```
 class MySyncConsumer(SyncConsumer):
     def websocket_connect(self, event):
         print("Connected...", event)
@@ -84,7 +77,9 @@ class MySyncConsumer(SyncConsumer):
 
     def websocket_disconnect(self, event):
         print("Disconnected...", event)
+```
 
+```
 class MyAsyncConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         print("Connected...", event)
@@ -102,12 +97,13 @@ class MyAsyncConsumer(AsyncConsumer):
 
     async def websocket_disconnect(self, event):
         print("Disconnected...", event)
-Frontend WebSocket Integration
-JavaScript WebSocket Client
+```
+# Frontend WebSocket Integration
+** JavaScript WebSocket Client **
 Add the following JavaScript code to your HTML to establish a WebSocket connection:
-
 javascript
-Copy code
+
+```
 const ws = new WebSocket("ws://localhost:8000/ws/sc/");
 
 ws.onopen = (event) => {
@@ -119,6 +115,7 @@ ws.onmessage = (event) => {
     console.log("Message received from server:", event.data);
     document.getElementById("test").innerHTML = event.data;
 };
+```
 Channels Layer
 Django Channels Layer allows communication between different instances of an application, facilitating distributed real-time applications.
 
@@ -127,13 +124,10 @@ To use Redis as your channels layer, you need to configure it in your settings:
 
 Install the Redis package:
 
-bash
-Copy code
-pip install channels-redis
+```pip install channels-redis```
 Add the following to your settings:
 
-python
-Copy code
+```
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
@@ -142,10 +136,11 @@ CHANNEL_LAYERS = {
         },
     },
 }
-Summary
+```
+# Summary
 You now have a basic setup for using Django Channels with WebSocket support. This allows for real-time communication between the server and clients. You can further extend this by implementing additional features like user authentication, group messaging, and more.
 
-Note
+# Note
 Make sure to run a Redis server locally or in your production environment to utilize the Channels Layer effectively.
 
 For more detailed information, check the official Django Channels documentation.
