@@ -1,153 +1,149 @@
-# chat app 
+# Django Channels WebSocket Setup
+## Overview
+This README provides a step-by-step guide to setting up Django Channels with WebSocket support, enabling real-time communication in your Django application.
+
+## Prerequisites
+- Python 3.x
+- Django 3.x or higher
+## Basic knowledge of Django and Python
+Installation
+Install the necessary packages:
+
 
 ```
-pip install daphne
+pip install daphne channels channels-redis
 ```
-### DJANGO Channels: setup:
+Django Channels Setup
+1. Configure ASGI Application
+In your Django project's settings file (settings.py), add the following:
 
-        #.ASGI_APPLICATION = 'Jahangir.asgi.application'
-        #.asgi.py file ===============================================
-                       import os
+### python
+ASGI_APPLICATION = 'Jahangir.asgi.application'
+2. Create asgi.py
+Create an asgi.py file in your project directory:
 
-                        from django.core.asgi import get_asgi_application
-                        from channels.routing import ProtocolTypeRouter,URLRouter
-                        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Jahangir.settings')
-                        import app.routring as r
-                        application = ProtocolTypeRouter({
-                            "http":get_asgi_application(),
-                            'websocket':URLRouter(
-                                r.websocket_urlspattens
-                            )
+### python
 
-                        })
-                        ===========================================================
-        
-        #.django app create app.py 
-                    then create routing.py ->
-                            =======================================================
+import os
+from django.core.asgi import get_asgi_application
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.auth import AuthMiddlewareStack
+import app.routing as r
 
-                            from django.urls import path
-                            from . import consumers
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Jahangir.settings')
 
-                            websocket_urlspattens = [
-                                path("ws/sc/",consumers.MySyncConsumer.as_asgi()),
-                            ]
-
-        
-                    then create consumers.py file ->
-                            =========================================================
-                            from channels.consumer import SyncConsumer,AsyncConsumer
-                            from channels.generic.websocket import AsyncWebsocketConsumer
-                            from time import sleep
-                            import asyncio
-
-                            class MySyncConsumer(SyncConsumer):
-                                def websocket_connect(self, event):
-                                    print("Connected...",event)
-                                    self.send({
-                                        "type": "websocket.accept",        
-                                    })
-                                    
-                                def websocket_receive(self,event):
-                                    print("received by ...",event)
-                                    print(event['text'])
-                                    self.send({
-                                        "type":"websocket.send",
-                                        "text":"Bhaia kemon achen ?"
-                                    })
-                                    
+application = ProtocolTypeRouter({
+    "http": get_asgi_application(),
+    "websocket": AuthMiddlewareStack(
+        URLRouter(
+            r.websocket_urlpatterns
+        )
+    ),
+})
+3. Create a Django App
+Create your Django app (if you haven't already):
 
 
-                                def websocket_disconnect(self, event):
-                                    print("Disconnected...",event)
+python manage.py startapp app
+4. Define WebSocket Routing
+In your app, create a routing.py file:
 
+python
+Copy code
+from django.urls import path
+from . import consumers
 
-                            class MyAsncConsumer(AsyncConsumer):
-                                async def websocket_connect(self, event):
-                                    print("Connected...",event)
-                                    await self.send({
-                                        "type": "websocket.accept",        
-                                    })
-                                    
-                                async def websocket_receive(self,event):
-                                    for i in range(50):
-                                        await self.send({
-                                        "type":"websocket.send",
-                                        "text":str(i),
-                                        })
-                                        await asyncio.sleep(1)
-                                    
+websocket_urlpatterns = [
+    path("ws/sc/", consumers.MySyncConsumer.as_asgi()),
+]
+5. Create Consumers
+Create a consumers.py file in your app directory:
 
+python
+Copy code
+from channels.consumer import SyncConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer
+import asyncio
 
-                                async def websocket_disconnect(self, event):
-                                    print("Disconnected...",event)
+class MySyncConsumer(SyncConsumer):
+    def websocket_connect(self, event):
+        print("Connected...", event)
+        self.send({
+            "type": "websocket.accept",
+        })
 
-                    
+    def websocket_receive(self, event):
+        print("Received by...", event)
+        print(event['text'])
+        self.send({
+            "type": "websocket.send",
+            "text": "Bhaia kemon achen?",
+        })
 
-                
-Server Side ->
-    -> When Sending Data to client 
-        . Python to String 
+    def websocket_disconnect(self, event):
+        print("Disconnected...", event)
 
-When Receiving Data From client
-    -> String to Python
+class MyAsyncConsumer(AsyncConsumer):
+    async def websocket_connect(self, event):
+        print("Connected...", event)
+        await self.send({
+            "type": "websocket.accept",
+        })
 
+    async def websocket_receive(self, event):
+        for i in range(50):
+            await self.send({
+                "type": "websocket.send",
+                "text": str(i),
+            })
+            await asyncio.sleep(1)
 
-Python Json Lib 
-    import Json  
-        Json.dumps() - this method is used to convert Python dictionary into json String
-        json.loads() - This method is used to convert json string into Python dictionary
+    async def websocket_disconnect(self, event):
+        print("Disconnected...", event)
+Frontend WebSocket Integration
+JavaScript WebSocket Client
+Add the following JavaScript code to your HTML to establish a WebSocket connection:
 
+javascript
+Copy code
+const ws = new WebSocket("ws://localhost:8000/ws/sc/");
 
-JSON 
-    JSON.parse() -> This method is used to convert json string into javascript  object 
-    JSON.stringify() -> this method is used to convert javascript object into json string
+ws.onopen = (event) => {
+    console.log("WebSocket connection open...");
+    ws.send("HI, Message from client...");
+};
 
+ws.onmessage = (event) => {
+    console.log("Message received from server:", event.data);
+    document.getElementById("test").innerHTML = event.data;
+};
+Channels Layer
+Django Channels Layer allows communication between different instances of an application, facilitating distributed real-time applications.
 
- ws.onopen = (event) => {
-            console.log("websocket conection open ...");
-            ws.send("HI, Message from client ...")
+Redis Channels Layer
+To use Redis as your channels layer, you need to configure it in your settings:
 
-        }
+Install the Redis package:
 
- ws.onmessage = (event) => {
-            console.log("Message Recevied from server ..", event);
-            document.getElementById("test").innerHTML = event.data;
-        }
+bash
+Copy code
+pip install channels-redis
+Add the following to your settings:
 
+python
+Copy code
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+Summary
+You now have a basic setup for using Django Channels with WebSocket support. This allows for real-time communication between the server and clients. You can further extend this by implementing additional features like user authentication, group messaging, and more.
 
+Note
+Make sure to run a Redis server locally or in your production environment to utilize the Channels Layer effectively.
 
-
-DJANGO CHANNELS LAYER:
-
-    CHANNELS LAYER allow you to talk between differant instances of an application it is for heigh-level application to application communication . 
-
-    A CHANNELS LAYER is transport  mechanism that allow multiple consumer instance to communicate with each other and other part DJANGO
-
-
-    They are useful part making a  distributed real-time application if you don't want to have to shuttle all of your message or events through a database 
-
-Redis CHANNELS LAYER ( always production level)
-In-memory  CHANNELS LAYER
-
-
-
-
-CHANNELS LAYER
---------------
-
-    Channels -> Channels are first are first in first out queqe with at-most onec delivary ssemantics .Each Channels has name . Message are sent to Channels by anyone who knows the Channels name and the givan to consumerlistening on that Channels
-
-
-    Group -> Sending to individual Channels isn't particularly useful - in most cases you 'll want to send to multiple Channels/consumer at onecas a  broadcast and there we use Group.
-    removed from  a Group by anyone who knows the Group name.Using the Group name you can also send group are a broadcast system that =>
-                                ->allow you ato add removed Channels names from nemed groups and send to those named groups
-                                ->Provides group expired for clean-up conection whose disconnect handler did't get to run
-    Message -> Message must be a dict . Because these message are sometimes sent over a network , they need to be serialiable
-
-REDIS CHANNELS LAYER
-
-        Redis works as the communication store for channels layer .
-        In order to use Redis as a channels layer you have to install channels_redis package .
-        channels_redis is the only offcial Djanog-maintained  Channels layer Supported for production use .
-        The layer use Redis as tis backing store , and Support both a single-server and sharded configurations , as well as group Support . 
+For more detailed information, check the official Django Channels documentation.
