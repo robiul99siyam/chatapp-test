@@ -1,10 +1,10 @@
-DJANGO Channels: setup:
+###DJANGO Channels: setup:
 
-        ``
-        1.pip install daphne
-        2.ASGI_APPLICATION = 'Jahangir.asgi.application'
-        ``
-        3.asgi.py file ===============================================
+        ```
+        pip install daphne
+        ```
+        #.ASGI_APPLICATION = 'Jahangir.asgi.application'
+        #.asgi.py file ===============================================
                        import os
 
                         from django.core.asgi import get_asgi_application
@@ -20,7 +20,7 @@ DJANGO Channels: setup:
                         })
                         ===========================================================
         
-        4.django app create app.py 
+        #.django app create app.py 
                     then create routing.py ->
                             =======================================================
 
