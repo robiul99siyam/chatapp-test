@@ -24,6 +24,7 @@ Create an asgi.py file in your project directory:
 
 ### python
 
+```
 import os
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -40,6 +41,7 @@ application = ProtocolTypeRouter({
         )
     ),
 })
+```
 3. Create a Django App
 Create your Django app (if you haven't already):
 
