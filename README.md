@@ -127,6 +127,7 @@ Install the Redis package:
 ```pip install channels-redis```
 Add the following to your settings:
 
+# When Use of reids sever 
 ```
 CHANNEL_LAYERS = {
     "default": {
@@ -137,6 +138,28 @@ CHANNEL_LAYERS = {
     },
 }
 ```
+# When Use of In momory location 
+```
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
+
+```
+# Always this Middleware
+```
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+```
+
 # Summary
 You now have a basic setup for using Django Channels with WebSocket support. This allows for real-time communication between the server and clients. You can further extend this by implementing additional features like user authentication, group messaging, and more.
 
